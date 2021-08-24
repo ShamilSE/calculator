@@ -12,37 +12,46 @@ options {
      #define PARSER_TRACE(name)
      #define PARSER_TREE(p)  p->expr(p, 0).tree
      #include <iostream>
+     #include <string>
 }
 
 /*------------------------------------------------------------------
  * PARSER RULES
  *------------------------------------------------------------------*/
+ 
+// PARSER
 
+prog: stat+;
+
+// START:stat
+stat
+    : 
+        expr {std::cout << $expr.value << std::endl;}
+    ;    
+// END:stat
+
+// START:expr
 expr returns [int value]
-    :   e=minus   {$value = $e.value;}
-     ->^($e)
+    :   e=multExpr {$value = $e.value;}
+        (   PLUS e=multExpr {$value += $e.value;}
+        |   MINUS e=multExpr {$value -= $e.value;}
+        )*
     ;
+// END:expr
 
-minus returns [int value]
-    :   e=plus {$value = $e.value;} (MINUS e=plus {$value -= $e.value;})*
-    ->^(MINUS plus+)
-    ; 
-
-plus returns [int value]
-    :   e=div {$value = $e.value;} (PLUS  e=div {$value += $e.value;})*
-    ->^(PLUS div+)
-    ; 
-
-div returns [int value]
-    :   e=mult {$value = $e.value;} (DIV  e=mult {$value /= $e.value;})*
-    ->^(DIV mult+)
-    ; 
-
-mult returns [int value]
-    : e=factor {$value = $e.value;} (MULT e=factor {$value *= $e.value;})*
-    ->^(MULT factor+)
+// START:multExpr
+multExpr returns [int value]
+    :   
+    e=atom {$value = $e.value;} (MULT e=atom {$value *= $e.value;})* // execute multiplication immediately - priority
     ;
+// END:multExpr
 
-factor returns [int value]
-    : NUMBER {$value = $NUMBER->getText($NUMBER)->toInt32($NUMBER->getText($NUMBER));}
+// START:atom
+atom returns [int value]
+    :
+        INT {$value = $INT->getText($INT)->toInt32($INT->getText($INT));}
+        |
+        OPENBRACKET expr CLOSEBRACKET {$value = $expr.value;} // return sum of expression - priority in brackets
     ;
+// END:atom
+ 
