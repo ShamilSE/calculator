@@ -8,26 +8,16 @@ options {
 {
     #define LEXER_TRACE(name)
 }
-
+ 
 /*------------------------------------------------------------------
  * LEXER RULES
  *------------------------------------------------------------------*/
 
-PLUS        : '+' ;
-MINUS       : '-' ;
-MULT        : '*' ;
-DIV         : '/' ;
- 
-NUMBER      : (DIGIT)+
-            ;
- 
-WHITESPACE  : ( '\t' | ' ' | '\r' | '\n'| '\u000C' )+
-              {
-                 $channel = HIDDEN;
-              }
-            ;
-
-fragment 
-DIGIT       : '0'..'9'
-            ;
-
+NEWLINE: '\r'? '\n';
+INT: '0'..'9'+;
+WS: (' ' | '\t' | '\n' | '\r')+ {$channel = HIDDEN;};
+PLUS: '+';
+MINUS: '-';
+MULT: '*';
+OPENBRACKET: '(';
+CLOSEBRACKET: ')';
