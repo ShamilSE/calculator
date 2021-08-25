@@ -54,5 +54,5 @@ atom returns [int value]
     :
         INT {$value = $INT->getText($INT)->toInt32($INT->getText($INT));}
         |
-        OPENBRACKET expr CLOSEBRACKET {$value = $expr.value;}
+        OPENBRACKET expr CLOSEBRACKET {$value = $expr.value;} ->expr // rewrite hidden
     ;
