@@ -19,5 +19,5 @@ PLUS: '+';
 MINUS: '-';
 MULT: '*';
 DIV: '/';
-OPENBRACKET: '(';
-CLOSEBRACKET: ')';
+OPENBRACKET: '('; {$channel = HIDDEN;};
+CLOSEBRACKET: ')'; {$channel = HIDDEN;};
