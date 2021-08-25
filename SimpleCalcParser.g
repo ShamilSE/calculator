@@ -3,7 +3,7 @@ parser grammar SimpleCalcParser;
 options {
     language=C;
     output=AST;
-    tokenVocab=SimpleCalc;
+    tokenVocab=SimpleCalcLexer;
 }
 
 @members
@@ -23,35 +23,36 @@ options {
 
 prog: stat+;
 
-// START:stat
+
 stat
     : 
         expr {std::cout << $expr.value << std::endl;}
+        ->^(expr)
     ;    
-// END:stat
 
-// START:expr
 expr returns [int value]
-    :   e=multExpr {$value = $e.value;}
-        (   PLUS e=multExpr {$value += $e.value;}
-        |   MINUS e=multExpr {$value -= $e.value;}
+    :
+        e=multExpr {$value = $e.value;}
+        (
+            PLUS^ e=multExpr {$value += $e.value;}
+            |
+            MINUS^ e=multExpr {$value -= $e.value;}
         )*
     ;
-// END:expr
 
-// START:multExpr
 multExpr returns [int value]
-    :   
-    e=atom {$value = $e.value;} (MULT e=atom {$value *= $e.value;})* // execute multiplication immediately - priority
+    :
+        e=atom {$value = $e.value;}
+        (
+            MULT^ e=atom {$value *= $e.value;}
+            |
+            DIV^ e=atom {$value /= $e.value;}
+        )*
     ;
-// END:multExpr
 
-// START:atom
 atom returns [int value]
     :
         INT {$value = $INT->getText($INT)->toInt32($INT->getText($INT));}
         |
-        OPENBRACKET expr CLOSEBRACKET {$value = $expr.value;} // return sum of expression - priority in brackets
+        OPENBRACKET expr CLOSEBRACKET {$value = $expr.value;}
     ;
-// END:atom
- 
