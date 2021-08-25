@@ -13,11 +13,11 @@ options {
  * LEXER RULES
  *------------------------------------------------------------------*/
 
-NEWLINE: '\r'? '\n';
 INT: '0'..'9'+;
 WS: (' ' | '\t' | '\n' | '\r')+ {$channel = HIDDEN;};
 PLUS: '+';
 MINUS: '-';
 MULT: '*';
+DIV: '/';
 OPENBRACKET: '(';
 CLOSEBRACKET: ')';
